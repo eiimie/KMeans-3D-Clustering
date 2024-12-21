@@ -32,7 +32,7 @@ public class ClusterGenerator {
     }
 
     // example usage... 
-    public static void main(string[] args) {
+    public static void main(String[] args) {
         Random random = new Random(42); 
 
         // generate 3 test clusters 
