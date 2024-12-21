@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -22,5 +25,10 @@ public class Main {
         KMeans3D kmeans = new KMeans3D(allPoints, 3, 100);
         kmeans.fit();
         kmeans.printResults();
-    }
+
+        // export to excel
+        String outputFilename = "kmeans_3d_results.csv";
+        CSVExporter.exportToCSV(outputFilename, kmeans.points, kmeans.assignments);
+
+        }
 }
