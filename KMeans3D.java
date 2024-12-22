@@ -12,6 +12,7 @@ public class KMeans3D {
     private int k;
     private int maxIterations; 
 
+    // constructor: 
     public KMeans3D(List<Point3D> points, int k, int maxIterations) {
         this.points = points;
         this.k = k;
@@ -19,6 +20,17 @@ public class KMeans3D {
         this.centroids = new Point3D[k];
         this.assignments = new int[points.size()];
     }
+
+    // getter for points:
+    public List<Point3D> getPoints() {
+        return points;
+    }
+
+    // getter for assignments
+    public int[] getAssignments() {
+        return assignments;
+    }
+
 
     public void fit() { 
         // initialise centroids randomly from existing points

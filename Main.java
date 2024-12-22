@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         Random random = new Random(42); // Fixed seed for reproducibility
         List<Point3D> allPoints = new ArrayList<>();
-    
+
         // generate three clusters in triangle formation, each at different z levels
         allPoints.addAll(ClusterGenerator.generateCluster(0, 0, 0, 0.5, 100, random));
         allPoints.addAll(ClusterGenerator.generateCluster(5, 5, 3, 0.5, 100, random));
@@ -28,7 +28,6 @@ public class Main {
 
         // export to excel
         String outputFilename = "kmeans_3d_results.csv";
-        CSVExporter.exportToCSV(outputFilename, kmeans.points, kmeans.assignments);
-
-        }
+        CSVExporter.exportToCSV(outputFilename, kmeans);  // Passing KMeans3D object
+    }
 }
