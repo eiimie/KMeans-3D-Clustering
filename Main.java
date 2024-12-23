@@ -29,5 +29,8 @@ public class Main {
         // export to excel
         String outputFilename = "kmeans_3d_results.csv";
         CSVExporter.exportToCSV(outputFilename, kmeans);  // Passing KMeans3D object
+        
+        // cluster visualisation
+        ClusterVisualiser.visualise(kmeans.getPoints(), kmeans.getAssignments(), 3);
     }
 }
