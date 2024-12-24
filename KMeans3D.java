@@ -140,4 +140,9 @@ public class KMeans3D {
         kmeans.fit();
         kmeans.printResults();
     }
+
+    // getter method for centroids
+    public Point3D[] getCentroids() {
+        return centroids;
+    }    
 }

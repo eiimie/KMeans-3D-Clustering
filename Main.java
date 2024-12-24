@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        Random random = new Random(42); // Fixed seed for reproducibility
+        Random random = new Random(); 
         List<Point3D> allPoints = new ArrayList<>();
 
         // generate three clusters in triangle formation, each at different z levels
@@ -31,6 +31,6 @@ public class Main {
         CSVExporter.exportToCSV(outputFilename, kmeans);  // Passing KMeans3D object
         
         // cluster visualisation
-        ClusterVisualiser.visualise(kmeans.getPoints(), kmeans.getAssignments(), 3);
+        ClusterVisualiser.visualise(kmeans.getPoints(), kmeans.getAssignments(), kmeans.getCentroids(), 3);
     }
 }
