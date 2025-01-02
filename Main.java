@@ -3,17 +3,17 @@ import java.util.List;
 import java.util.Random;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
         Random random = new Random(); 
-        List<Point3D> allPoints = new ArrayList<>();
 
-        // generate three clusters in triangle formation, each at different z levels
-        allPoints.addAll(ClusterGenerator.generateCluster(0, 0, 0, 0.5, 100, random));
-        allPoints.addAll(ClusterGenerator.generateCluster(5, 5, 3, 0.5, 100, random));
-        allPoints.addAll(ClusterGenerator.generateCluster(-4, 4, -2, 0.5, 100, random));
+        // generate three clusters with a 10% overlap:
+        int numClusters = 3; 
+        double clusterRadius = 0.8;
+        int pointsPerCluster = 100; 
+        
+        List<Point3D> allPoints = ClusterGenerator.generateOverlappingClusters(numClusters, clusterRadius, pointsPerCluster, random);
 
         // print original points to copy into Excel
         System.out.println("Original Points (X,Y,Z):");
@@ -26,9 +26,9 @@ public class Main {
         kmeans.fit();
         kmeans.printResults();
 
-        // export to excel
+        // export to Excel
         String outputFilename = "kmeans_3d_results.csv";
-        CSVExporter.exportToCSV(outputFilename, kmeans);  // Passing KMeans3D object
+        CSVExporter.exportToCSV(outputFilename, kmeans); 
         
         // cluster visualisation
         ClusterVisualiser.visualise(kmeans.getPoints(), kmeans.getAssignments(), kmeans.getCentroids(), 3);

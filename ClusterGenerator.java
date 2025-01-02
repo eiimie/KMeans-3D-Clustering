@@ -1,50 +1,96 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.ArrayList;
 
 public class ClusterGenerator {
-    // creates synthetic 2D data points
-    // to demonstrate and test clustering
     public static List<Point3D> generateCluster(
         double centreX, 
         double centreY, 
-        double centreZ,
+        double centreZ, 
         double radius, 
         int numPoints, 
-        Random random) {
+        Random random
+    ) {
         List<Point3D> cluster = new ArrayList<>();
 
-        for (int i = 0; i < numPoints; i++) { 
-            // generate rando angle and distance in cluster
-            double phi = random.nextDouble() * 2 * Math.PI;
-            double theta = Math.acos(2 * random.nextDouble() - 1);
-            double distance = radius * Math.cbrt(random.nextDouble());
+        for (int i = 0; i < numPoints; i++) {
+            // generate points using Gaussian distribution
+            double x = centreX + random.nextGaussian() * radius;
+            double y = centreY + random.nextGaussian() * radius;
+            double z = centreZ + random.nextGaussian() * radius;
 
-            // convert spherical coords 2 cartesian coordinates
-            double x = centreX + distance * Math.sin(theta) * Math.cos(phi);
-            double y = centreY + distance * Math.sin(theta) * Math.sin(phi);
-            double z = centreZ + distance * Math.cos(theta);
-
-            cluster.add(new Point3D(x,y,z));
+            cluster.add(new Point3D(x, y, z));
         }
 
         return cluster;
     }
 
-    // example usage... 
-    public static void main(String[] args) {
-        Random random = new Random(42); 
-
-        // generate 3 test clusters 
+    public static List<Point3D> generateOverlappingClusters(
+        int numClusters, 
+        double baseRadius, 
+        int pointsPerCluster, 
+        Random random
+    ) {
         List<Point3D> allPoints = new ArrayList<>();
-        allPoints.addAll(generateCluster(0,0,0,1.0,100,random));
-        allPoints.addAll(generateCluster(5,5,5,1.0,100,random));
-        allPoints.addAll(generateCluster(-3,-3,-3,1.0,100,random));
+        Point3D[] centers = new Point3D[numClusters];
 
-        // use these points w/ KMeans3d
-        KMeans3D kmeans = new KMeans3D(allPoints,3,100);
-        kmeans.fit();
-        kmeans.printResults();
+        // generate centres in triangle formation
+        double triangleRadius = baseRadius * 3; // distance from centre to vertices
+        double angleStep = 2 * Math.PI / numClusters;
+
+        for (int i = 0; i < numClusters; i++) {
+            double angle = i * angleStep;
+            // create triangle vertices with different Z coordinates
+            centers[i] = new Point3D(
+                triangleRadius * Math.cos(angle),
+                triangleRadius * Math.sin(angle),
+                baseRadius * (i - 1) // ensures different Z planes
+            );
+        }
+
+        // verify centres aren't coplanar
+        verifyNonCoplanar(centers);
+
+        // generate clusters with controlled overlap
+        for (int i = 0; i < numClusters; i++) {
+            // increase radius to create ~10% overlap
+            double overlapRadius = baseRadius * 1.2; // adjusted for approximate 10% overlap
+            allPoints.addAll(generateCluster(
+                centers[i].x, 
+                centers[i].y, 
+                centers[i].z, 
+                overlapRadius, 
+                pointsPerCluster, 
+                random
+            ));
+        }
+
+        return allPoints;
     }
 
+    private static void verifyNonCoplanar(Point3D[] centers) {
+        if (centers.length < 3) return;
+        
+        // calculate normal vector of first three points
+        Point3D v1 = new Point3D(
+            centers[1].x - centers[0].x,
+            centers[1].y - centers[0].y,
+            centers[1].z - centers[0].z
+        );
+        Point3D v2 = new Point3D(
+            centers[2].x - centers[0].x,
+            centers[2].y - centers[0].y,
+            centers[2].z - centers[0].z
+        );
+
+        // cross product should not be zero
+        double crossX = v1.y * v2.z - v1.z * v2.y;
+        double crossY = v1.z * v2.x - v1.x * v2.z;
+        double crossZ = v1.x * v2.y - v1.y * v2.x;
+
+        double magnitude = Math.sqrt(crossX * crossX + crossY * crossY + crossZ * crossZ);
+        if (magnitude < 1e-10) {
+            throw new IllegalStateException("Generated centers are coplanar");
+        }
+    }
 }
