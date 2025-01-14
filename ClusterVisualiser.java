@@ -38,6 +38,9 @@ public class ClusterVisualiser extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
+        setBackground(Color.BLACK);
+        g.setColor(Color.WHITE);
+        g.drawString("3D K-Means Clustering Visualisation", 300, 50);
         
         // turn on antialiasing for smoother drawing
         g2d.setRenderingHint(
@@ -90,7 +93,7 @@ public class ClusterVisualiser extends JPanel {
             g2d.fillRect(legendX, legendY + (i * 25), swatchSize, swatchSize);
             
             // draw label
-            g2d.setColor(Color.BLACK);
+            g2d.setColor(Color.WHITE);
             g2d.drawString("Cluster " + i, legendX + swatchSize + 10, legendY + (i * 25) + swatchSize);
         }
     }
