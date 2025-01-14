@@ -25,6 +25,7 @@ public class Main {
         KMeans3D kmeans = new KMeans3D(allPoints, 3, 100);
         kmeans.fit();
         kmeans.printResults();
+        kmeans.printPerformanceReport();
 
         // export to Excel
         String outputFilename = "kmeans_3d_results.csv";

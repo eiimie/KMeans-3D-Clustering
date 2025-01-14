@@ -12,6 +12,8 @@ public class KMeans3D {
     private int k;
     private int maxIterations; 
 
+    private KMeansPerformanceLogger logger;
+
     // constructor: 
     public KMeans3D(List<Point3D> points, int k, int maxIterations) {
         this.points = points;
@@ -19,6 +21,7 @@ public class KMeans3D {
         this.maxIterations = maxIterations; 
         this.centroids = new Point3D[k];
         this.assignments = new int[points.size()];
+        this.logger = new KMeansPerformanceLogger(k,3);
     }
 
     // getter for points:
@@ -33,7 +36,9 @@ public class KMeans3D {
 
 
     public void fit() { 
+        logger.startLogging();
         // initialise centroids randomly from existing points
+
         Random rand = new Random();
         Set<Integer> usedIndices = new HashSet<>();
         for (int i = 0; i < k; i++) {
@@ -62,12 +67,15 @@ public class KMeans3D {
             
             // update centroids
             updateCentroids();
+
+            logger.logIteration(points, centroids, assignments, iteration);
             
             iteration++;
         } while (changed && iteration < maxIterations); 
+
+        logger.endLogging();
     }
 
-    // Moved findNearestCentroid method outside fit()
     private int findNearestCentroid(Point3D point) { 
         int nearest = 0;
         double minDistance = Double.MAX_VALUE;
@@ -144,5 +152,9 @@ public class KMeans3D {
     // getter method for centroids
     public Point3D[] getCentroids() {
         return centroids;
-    }    
+    }   
+    
+    public void printPerformanceReport() {
+        logger.printPerformanceReport();
+    }
 }
